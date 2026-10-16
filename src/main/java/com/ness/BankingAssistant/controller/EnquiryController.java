@@ -3,10 +3,9 @@ package com.ness.BankingAssistant.controller;
 import com.ness.BankingAssistant.dto.*;
 import com.ness.BankingAssistant.service.EnquiryService;
 import jakarta.validation.Valid;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 public class EnquiryController {
@@ -32,11 +31,16 @@ public class EnquiryController {
         return enquiryService.summary(request);
     }
 
-    @PostMapping(" /api/assistant/ask")
+    @PostMapping("/api/assistant/ask")
     public AskResponse summary(
             @Valid @RequestBody AskRequest request) {
 
         return enquiryService.askQuestion(request);
+    }
+
+    @GetMapping("/api/assistant/audit")
+    public List<PromptAudit> getAuditPromptHistory(){
+        return enquiryService.auditPromptHistory();
     }
 
 

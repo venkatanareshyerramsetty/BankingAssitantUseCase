@@ -1,0 +1,101 @@
+This BankingAssistant application runs on port no 9000 defined in properties
+Before running ensure api key is added to environment path variables with myKey
+we have total 4 api rest end points to test the use case
+
+This application is enabled with basic auth for the following endpoints with 2 roles
+TESTUSER - USER role
+TESTADMIN - ADMIN role
+
+both roles uses same username and password
+Username : TESTUSER
+Password : TESTUSER
+
+Using admin role we can access audit end point where we can see all the prompts used.
+
+1.http://localhost:9000/api/enquiries/summarize
+
+request
+{
+ "customerReference": "CUST-DEMO-104",
+ "channel": "WEB",
+ "message": "My transfer of INR 4500 shows failed, but the amount seems deducted. What should I do?"
+}
+
+response
+{
+  "summary": "The user has attempted a transfer of INR 4500, which shows as failed, but the amount appears to have been deducted from their account.",
+  "suggestedNextStep": "Contact your bank or payment service provider to report the issue and request a refund or resolution."
+}
+
+2.http://localhost:9000/api/enquiries/classify
+
+request
+{
+ "customerReference": "CUST-DEMO-104",
+ "channel": "WEB",
+ "message": "My transfer of INR 4500 shows failed, but the amount seems deducted. What should I do?"
+}
+
+response
+{
+  "category": "TRANSFER_ISSUE",
+  "urgency": "HIGH",
+  "sentiment": "CONCERNED",
+  "confidence": 0.95,
+  "rationale": "The enquiry involves a failed transfer with a deduction already made, indicating a high urgency to resolve the issue and concern from the customer."
+}
+
+3.http://localhost:9000/api/assistant/ask
+
+request
+{
+  "question": "My transfer of INR 4500 shows failed, but the amount seems deducted. What should I do?"
+}
+
+response
+{
+  "answer": "Please check with your bank or financial institution to confirm the transaction status. If the amount has been deducted but the transfer failed, they should be able to provide assistance. You may also need to wait for a few hours for the funds to be reversed or contact customer support for further help.",
+  "disclaimer": "This response is for informational purposes only and does not constitute financial advice. Please consult your bank for specific inquiries regarding your transaction."
+}
+
+
+4.http://localhost:9000/api/assistant/audit
+
+response
+[
+    {
+        "id": "1f393789-1916-4756-8c6a-e769c013993a",
+        "prompt": "My transfer of INR 4500 shows failed, but the amount seems deducted. What should I do?",
+        "promptType": "System",
+        "response": "SummaryResponse[summary=The user has attempted to transfer INR 4500, which shows as failed, but the amount appears to have been deducted from their account., suggestedNextStep=Contact customer support of the bank or payment service to investigate the failed transaction and rectify the issue.]",
+        "timestamp": "2026-10-16T22:29:21.8814306"
+    },
+    {
+        "id": "9678c055-e538-43b7-b652-29705690239b",
+        "prompt": "My transfer of INR 4500 shows failed, but the amount seems deducted. What should I do?",
+        "promptType": "System",
+        "response": "ClassifyResponse[category=TRANSFER_ISSUE, urgency=HIGH, sentiment=CONCERNED, confidence=0.9, rationale=The enquiry is about a failed transfer which is a critical issue involving potential financial loss, indicating a high urgency. The mention of a deduction without successful transfer suggests concern from the user.]",
+        "timestamp": "2026-10-16T22:29:42.8471228"
+    },
+    {
+        "id": "99220e03-41a2-4304-aecf-06575868f779",
+        "prompt": "My transfer of INR 4500 shows failed, but the amount seems deducted. What should I do?",
+        "promptType": "System",
+        "response": "AskResponse[answer=Please check with your bank or financial institution to confirm the transaction status. If the amount has been deducted but the transfer failed, you may need to wait for a refund, which can take a few days. If you do not receive the refund, contact customer support for assistance., disclaimer=This response is for informational purposes only and does not constitute financial advice.]",
+        "timestamp": "2026-10-16T22:30:11.1502106"
+    },
+    {
+        "id": "d9915a3e-1b6f-4bb7-ab2e-f57511e99ce3",
+        "prompt": "My transfer of INR 4500 shows failed, but the amount seems deducted. What should I do?",
+        "promptType": "System",
+        "response": "AskResponse[answer=Please check your bank statement to confirm the deduction. If the amount is deducted but the transfer shows as failed, contact your bank's customer service for assistance. Provide them with the transaction details, including the date, amount, and any reference numbers. They can help you resolve the issue or initiate a refund process if necessary., disclaimer=This information is not financial advice. Always consult with your bank for specific instructions regarding your transaction.]",
+        "timestamp": "2026-10-16T22:31:06.2609939"
+    },
+    {
+        "id": "e615160c-3545-4e4a-84e0-4c600438a74b",
+        "prompt": "My transfer of INR 4500 shows failed, but the amount seems deducted. What should I do?",
+        "promptType": "System",
+        "response": "ClassifyResponse[category=TRANSFER_ISSUE, urgency=HIGH, sentiment=CONCERNED, confidence=0.95, rationale=The user is experiencing an issue with a transfer that has failed despite the amount being deducted, indicating urgency to resolve the problem.]",
+        "timestamp": "2026-10-16T22:32:43.8057088"
+    }
+]

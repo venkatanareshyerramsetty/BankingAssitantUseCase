@@ -11,7 +11,7 @@ import java.util.Map;
 @RestController
 public class HealthController {
 
-    @GetMapping("/health")
+    @GetMapping("/api/health")
     public ResponseEntity<HealthCheckResponse> getApplicationHealth() {
         return new ResponseEntity<>(new HealthCheckResponse("UP", "SmartBanking-Assistant"), HttpStatus.OK);
     }
